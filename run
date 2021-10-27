@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -euo pipefail
+
+
+function help {
+    echo "usage: ${0} [clear|prepare|benchmark|graph] {additional_args}"
+}
+
+function copy_to_host {
+    HOST=${1}
+    REPODIR=$(dirname $(readlink -f $0))
+    rsync -av --no-o --no-g --delete --filter=':- ../.gitignore' "${REPODIR}/" "root@${HOST}:/root/jupyter-stress"
+}
+
+OP=${1:-}
+shift
+
+if [[ "${OP}" = "-h" ]]; then
+    help
+    exit 0
+fi
+export SCRIPTDIR=$(dirname $(readlink -f $0))
+
+case ${OP} in
+    sync)
+        copy_to_host $@
+        ;;
+    clear)
+        ${SCRIPTDIR}/clear.sh $@
+        ;;
+    prepare)
+        ${SCRIPTDIR}/prepare.sh $@
+        ;;
+    benchmark)
+        ${SCRIPTDIR}/benchmark.sh $@
+        ;;
+    graph)
+        ${SCRIPTDIR}/graph.sh $@
+        ;;
+    *)
+        help
+        exit 0
+esac

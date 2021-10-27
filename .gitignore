@@ -1,0 +1,8 @@
+.git
+__pycache__/
+.*.swp
+users.txt
+password.txt
+benchmark.log
+benchmark-*.log
+.venv
